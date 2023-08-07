@@ -7,12 +7,23 @@ import { Polybase } from "@polybase/client";
 import { Auth } from "@polybase/auth";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import HomePageContents from "./Pages/HomePageContents";
+import Todo from "./Pages/Todo";
+
 // https://youtube.com/shorts/ESfDVsjJKtM?feature=share
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage pageContents={HomePageContents} />} />
+        <Route
+          path="/"
+          element={<HomePage pageContents={HomePageContents} />}
+        />
+      </Routes>
+      <Routes>
+        <Route
+          path="/todo"
+          element={<HomePage pageContents={Todo} />}
+        />
       </Routes>
     </Router>
   );
