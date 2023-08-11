@@ -24,10 +24,12 @@ function Todo() {
   };
 
   async function DataHit(array) {
-    console.log(array);
-    const source = await handleSubmitt(array);
-    const newData = await source.data;
-    console.log(newData);
+    let date = await new Date().toString();
+    let data1 = await data.toString();
+    console.log(date, data1);
+    // const source = await handleSubmitt(array);
+    // const newData = await source.data;
+    // console.log(newData);
     const gasLimit = 250000;
 
     const provider = new ethers.providers.JsonRpcProvider(
@@ -38,7 +40,7 @@ function Todo() {
     const signerPrivateKey =
       '320c6ca026d3e4338a0569dedfa1c4faec7465235b32810c4e9f80f9969a296d';
     const signer = new ethers.Wallet(signerPrivateKey, provider);
-    const sourcee = await source.toString();
+    // const sourcee = await source.toString();
     // Consumer contract
     const consumerAddress = '0xf8535f1692244Ea7C30f1050cdEC7851a8cf8841';
     const subscriptionId = 1998;
@@ -429,15 +431,53 @@ function Todo() {
       contractAbi,
       signer
     );
+
     const someHex = '0x';
     const requestTx = await consumerContract.executeRequest(
-      sourcee,
-      0xb5,
-      ['bhai maa kasam', 'last try hai'], // Chainlink Functions request args
+      `const url =
+  "https://testnet.polybase.xyz/v0/collections/pk%2F0x19048fb81d19b5e3285d29b583b9a21bdad8b423280bea15e80a2488d9ab2f2d471c9d1d84acf2e32ae0fcd62a6916b25def11fc9cbe40df3c6f5f8e8a1f458a%2FPolybaseXChainlink%2FUser/records"
+
+const countryRequest = Functions.makeHttpRequest({
+  url: url,
+  method: "POST",
+  data: {
+    args: ["${date}", "${data}"],
+  },
+})
+const countryRes = await countryRequest
+const data1 = await countryRes["data"]["data"]
+console.log(data1);
+return Functions.encodeString(JSON.stringify(data1))
+`,
+      '0x',
+      [], // Chainlink Functions request args
       subscriptionId, // Subscription ID
       gasLimit // Gas limit for the transaction
     );
     console.log(requestTx);
+    getData(subscriptionId,gasLimit)
+  }
+
+  async function getData() {
+     const requestTx = await consumerContract.executeRequest(
+       `const url =
+  "https://testnet.polybase.xyz/v0/collections/pk%2F0x19048fb81d19b5e3285d29b583b9a21bdad8b423280bea15e80a2488d9ab2f2d471c9d1d84acf2e32ae0fcd62a6916b25def11fc9cbe40df3c6f5f8e8a1f458a%2FPolybaseXChainlink%2FUser/records"
+
+const countryRequest = Functions.makeHttpRequest({
+  url: url,
+  method: "POST",
+})
+const countryRes = await countryRequest
+const data1 = await countryRes["data"]["data"]
+console.log(data1);
+return Functions.encodeString(JSON.stringify(data1))
+`,
+       '0x',
+       [], // Chainlink Functions request args
+       subscriptionId, // Subscription ID
+       gasLimit // Gas limit for the transaction
+     );
+     console.log(requestTx);
   }
 
   return (
