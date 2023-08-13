@@ -1,31 +1,48 @@
 /** @format */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import polybase from '../Assets/Polybase.svg';
 import chainlink from '../Assets/Chainlink.svg';
 import X from '../Assets/X.svg';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
-// import contractAbi from '../artifacts/contracts/FunctionsConsumer.sol/FunctionsConsumer.json';
-import { handleSubmitt } from './Execute';
+
 function Todo() {
   const [data, setData] = useState('');
-  const [submittedData, setSubmittedData] = useState('');
+  const [submittedData, setSubmittedData] = useState([]);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    await fetch(
+      'https://testnet.polybase.xyz/v0/collections/pk%2F0x19048fb81d19b5e3285d29b583b9a21bdad8b423280bea15e80a2488d9ab2f2d471c9d1d84acf2e32ae0fcd62a6916b25def11fc9cbe40df3c6f5f8e8a1f458a%2FPolybaseXChainlink%2FUser/records'
+    )
+      .then(async (response) => {
+        const dataRes = await response.json();
+
+        return await dataRes.data;
+      })
+      .then((data) => {
+        console.log(data);
+        setSubmittedData(data);
+        console.log(submittedData);
+      });
+  };
+  let arrayFromPolybase = [];
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let date = new Date();
-    await setData(event.target.value);
-    let array = await [`${date}`, `${data}`];
+    let date = new Date().getTime;
+    setData(event.target.value);
+    let array = [`${date}`, `${data}`];
     console.log(array);
     await DataHit(array);
-    console.log(data);
   };
 
   async function DataHit(array) {
-    let date = await new Date().toString();
-    let data1 = await data.toString();
+    let date = new Date().toString();
+    let data1 = data.toString();
     console.log(date, data1);
     // const source = await handleSubmitt(array);
     // const newData = await source.data;
@@ -454,62 +471,83 @@ return Functions.encodeString(JSON.stringify(data1))
       subscriptionId, // Subscription ID
       gasLimit // Gas limit for the transaction
     );
-    console.log(requestTx);
-    getData(subscriptionId,gasLimit)
+    // const dataFromPolybase = await fetch(
+    //   'https://testnet.polybase.xyz/v0/collections/pk%2F0x19048fb81d19b5e3285d29b583b9a21bdad8b423280bea15e80a2488d9ab2f2d471c9d1d84acf2e32ae0fcd62a6916b25def11fc9cbe40df3c6f5f8e8a1f458a%2FPolybaseXChainlink%2FUser/records',
+    //   {
+    //     method: 'GET',
+    //   }
+    // );
+    // const jsonData = await dataFromPolybase.json();
+    // arrayFromPolybase = await jsonData.data;
+    // console.log(arrayFromPolybase);
+    // setSubmittedData(arrayFromPolybase);
+    // setTimeout(() => {
+    //   // Perform the operation after the delay
+    //   console.log('After 3 seconds:', submittedData);
+    // }, 3000);
+    // console.log(submittedData);
+    // console.log(requestTx);
+    await getData(subscriptionId, gasLimit, consumerContract);
   }
 
-  async function getData() {
-     const requestTx = await consumerContract.executeRequest(
-       `const url =
+  async function getData(subscriptionId, gasLimit, consumerContract) {
+    const getData = await consumerContract.executeRequest(
+      `const url =
   "https://testnet.polybase.xyz/v0/collections/pk%2F0x19048fb81d19b5e3285d29b583b9a21bdad8b423280bea15e80a2488d9ab2f2d471c9d1d84acf2e32ae0fcd62a6916b25def11fc9cbe40df3c6f5f8e8a1f458a%2FPolybaseXChainlink%2FUser/records"
-
 const countryRequest = Functions.makeHttpRequest({
   url: url,
-  method: "POST",
+  method: "GET",
 })
 const countryRes = await countryRequest
-const data1 = await countryRes["data"]["data"]
-console.log(data1);
+const data1 = await countryRes["data"]["data"] 
+console.log(data1)
 return Functions.encodeString(JSON.stringify(data1))
 `,
-       '0x',
-       [], // Chainlink Functions request args
-       subscriptionId, // Subscription ID
-       gasLimit // Gas limit for the transaction
-     );
-     console.log(requestTx);
+      '0x',
+      [], // Chainlink Functions request args
+      subscriptionId, // Subscription ID
+      gasLimit // Gas limit for the transaction
+    );
   }
 
   return (
-    <div
-      className="sm:col-span-4"
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
+    <>
+      <div
+        className="sm:col-span-4"
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          display: 'flex',
+          marginTop: '100px',
+        }}>
+        <div className="inline-flex">
+          <img
+            src={polybase}
+            alt="polybase"
+            style={{ maxWidth: '200px', marginRight: '50px' }}
+          />
 
-        marginTop: '100px',
-      }}>
-      <div className="inline-flex">
-        <img
-          src={polybase}
-          alt="polybase"
-          style={{ maxWidth: '200px', marginRight: '50px' }}
-        />
+          <img
+            src={X}
+            style={{ maxWidth: '30px', marginRight: '50px' }}
+          />
 
-        <img
-          src={X}
-          style={{ maxWidth: '30px', marginRight: '50px' }}
-        />
-
-        <img
-          src={chainlink}
-          alt="polybase"
-          style={{ maxWidth: '200px' }}
-        />
+          <img
+            src={chainlink}
+            alt="polybase"
+            style={{ maxWidth: '200px' }}
+          />
+        </div>
       </div>
-
-      <div className="mt-2">
-        <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+      <div
+        className="mt-2"
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginLeft: '500px',
+          marginTop: '75px',
+        }}>
+        <div className=" rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
           <input
             type="text"
             name="username"
@@ -521,9 +559,42 @@ return Functions.encodeString(JSON.stringify(data1))
             placeholder="janesmith"
           />
         </div>
-        <button onClick={handleSubmit}>Create the task</button>
+        <div>
+          <button
+            style={{
+              marginLeft: '175px',
+              marginTop: '50px',
+              border: '2px solid #e74c3c', // Set border width and color
+              padding: '10px 20px', // Optional: Add padding for better visual appearance
+              borderRadius: '5px', // Optional: Add border radius for rounded corners
+              backgroundColor: '#3498db', // Optional: Set background color
+              color: 'white', // Optional: Set text color
+            }}
+            onClick={handleSubmit}>
+            Create the task
+          </button>
+        </div>
+        {submittedData.length > 0 && (
+          <ul
+            role="list"
+            className="divide-y divide-gray-100">
+            {submittedData?.map((person) => (
+              <li
+                key={person.data.id}
+                className="flex justify-between gap-x-6 py-5">
+                <div className="flex min-w-0 gap-x-4">
+                  <div className="min-w-0 flex-auto">
+                    <p className="text-sm font-semibold leading-6 text-gray-900">
+                      {person.data.task}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 
