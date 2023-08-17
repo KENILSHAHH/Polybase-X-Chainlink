@@ -7,8 +7,10 @@ import chainlink from '../Assets/Chainlink.svg';
 import X from '../Assets/X.svg';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
+import { useNavigate } from 'react-router-dom';
 
 function Todo() {
+  const navigate = useNavigate();
   const [data, setData] = useState('');
   const [submittedData, setSubmittedData] = useState([]);
   useEffect(() => {
@@ -488,6 +490,7 @@ return Functions.encodeString(JSON.stringify(data1))
     // console.log(submittedData);
     // console.log(requestTx);
     await getData(subscriptionId, gasLimit, consumerContract);
+    window.location.reload();
   }
 
   async function getData(subscriptionId, gasLimit, consumerContract) {
@@ -511,13 +514,14 @@ return Functions.encodeString(JSON.stringify(data1))
   }
 
   return (
-    <>
+    <div
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       <div
         className="sm:col-span-4"
         style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          display: 'flex',
           marginTop: '100px',
         }}>
         <div className="inline-flex">
@@ -539,26 +543,27 @@ return Functions.encodeString(JSON.stringify(data1))
           />
         </div>
       </div>
-      <div
-        className="mt-2"
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginLeft: '500px',
-          marginTop: '75px',
-        }}>
-        <div className=" rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-          <input
-            type="text"
-            name="username"
-            id="username"
-            autoComplete="username"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="janesmith"
-          />
+      <div className="mt-2">
+        <div className="sm:col-span-3">
+          <label
+            htmlFor="first-name"
+            className="block text-sm font-medium leading-6 text-gray-900">
+            Enter your task
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="username"
+              id="username"
+              autoComplete="username"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              placeholder="I have a meeting at 8:00 pm"
+            />
+          </div>
         </div>
+
         <div>
           <button
             style={{
@@ -594,7 +599,7 @@ return Functions.encodeString(JSON.stringify(data1))
           </ul>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
